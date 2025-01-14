@@ -35,5 +35,6 @@ NODE_ENV=development
 - To update the database in development mode use `npm run migrate:develop`
 - To run the development version `npm run develop`.
 - To test the application `npm test`.
+- To run tests with coverage report `npm test -- --coverage`.
 - To build a production version `npm run build`.
 - To run the production build `npm run start`.
