@@ -2,6 +2,7 @@ import { NextFunction, Response } from "express";
 import { Request } from "express-jwt";
 import userGetPrisma from "../../utils/db/user/userGetPrisma";
 import linkViewer from "../../view/linkViewer";
+import linkCreatePrisma from "../../utils/db/link/linkCreatePrisma";
 
 export default async function linksCreate(
   req: Request,

@@ -4,6 +4,7 @@ import userRouter from "./routes/api/user";
 import profilesRouter from "./routes/api/profiles";
 import articlesRouter from "./routes/api/articles";
 import tagsRouter from "./routes/api/tags";
+import linksRouter from "./routes/api/links";
 import generalErrorHandler from "./middleware/errorHandling/generalErrorHandler";
 import {
   authErrorHandler,
@@ -24,6 +25,8 @@ app.use("/api/profiles", profilesRouter);
 app.use("/api/articles", articlesRouter);
 
 app.use("/api/tags", tagsRouter);
+
+app.use("/api/links", linksRouter);
 
 app.get("/", function (_req, res) {
   return res.send("This is just the backend for RealWorld");
