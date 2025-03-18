@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL") /// Format in env file: postgresql://USER:PASSWORD@HOST:PORT/DATABASE
 }
 
@@ -21,6 +21,7 @@ model User {
   authored   Article[] @relation("Author") /// List of articles this user has written.
   favorites  Article[] @relation("Favorites") /// List of articles this user has favorited.
   comment    Comment[] @relation("Author") /// List of comments this user has written.
+  links      Link[]    @relation("UserLinks") /// List of links this user has authored.
 }
 
 model Article {
@@ -58,7 +59,7 @@ model Link {
   overview    String
   url         String
   type        String
-  author      User     @relation(fields: [authorUsername], references: [username], onDelete: Cascade)
+  author      User     @relation("UserLinks", fields: [authorUsername], references: [username], onDelete: Cascade)
   authorUsername String
   createdAt   DateTime @default(now())
 }
