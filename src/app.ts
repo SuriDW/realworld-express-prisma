@@ -16,6 +16,9 @@ const app = express();
 // Allows parsing of json in the body of the request.
 app.use(express.json());
 
+// Serve static files from the public directory
+app.use(express.static('src/public'));
+
 app.use("/api/users", usersRouter);
 
 app.use("/api/user", userRouter);

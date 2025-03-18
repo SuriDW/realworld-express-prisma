@@ -10,8 +10,8 @@ export default async function linksListPrisma(
   const links = await prisma.link.findMany({
     where: {
       type,
-      title: title ? { contains: title, mode: "insensitive" } : undefined,
-      overview: overview ? { contains: overview, mode: "insensitive" } : undefined,
+      title: title ? { contains: title } : undefined,
+      overview: overview ? { contains: overview } : undefined,
     },
     take: limit,
     skip: offset,

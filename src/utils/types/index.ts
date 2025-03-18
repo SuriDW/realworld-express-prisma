@@ -3,6 +3,8 @@ interface Link {
   overview: string;
   url: string;
   type: string;
+  createdAt?: Date;
+  author?: any;
 }
 
 export { ValidationError } from "./validationError";

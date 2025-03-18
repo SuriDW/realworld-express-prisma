@@ -11,8 +11,8 @@ export default function linkViewer(
     overview: link.overview,
     url: link.url,
     type: link.type,
-    createdAt: link.createdAt,
-    author: profileViewer(link.author, currentUser),
+    createdAt: link.createdAt || new Date(),
+    author: link.author ? profileViewer(link.author, currentUser) : null,
   };
   return linkView;
 }
