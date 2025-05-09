@@ -6,21 +6,23 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL") /// Format in env file: postgresql://USER:PASSWORD@HOST:PORT/DATABASE
+  provider = "sqlite"
+  url      = env("DATABASE_URL") /// Format in env file: file:./dev.db
 }
 
 model User {
-  email      String    @unique /// User email for registering and login use.
-  username   String    @id /// User internal id.
-  password   String /// User password stored in the database.
-  bio        String? /// User biographical information.
-  image      String? /// Link to the user avatar.
-  follows    User[]    @relation("UserFollows") /// List of other users that this one follows.
-  followedBy User[]    @relation("UserFollows") /// List of other users that follows this one.
-  authored   Article[] @relation("Author") /// List of articles this user has written.
-  favorites  Article[] @relation("Favorites") /// List of articles this user has favorited.
-  comment    Comment[] @relation("Author") /// List of comments this user has written.
+  email                String        @unique /// User email for registering and login use.
+  username             String        @id /// User internal id.
+  password             String /// User password stored in the database.
+  bio                  String? /// User biographical information.
+  image                String? /// Link to the user avatar.
+  follows              User[]        @relation("UserFollows") /// List of other users that this one follows.
+  followedBy           User[]        @relation("UserFollows") /// List of other users that follows this one.
+  authored             Article[]     @relation("Author") /// List of articles this user has written.
+  favorites            Article[]     @relation("Favorites") /// List of articles this user has favorited.
+  comment              Comment[]     @relation("Author") /// List of comments this user has written.
+  createdRequirements  Requirement[] @relation("RequirementCreator") /// List of requirements this user has created.
+  assignedRequirements Requirement[] @relation("RequirementAssignee") /// List of requirements assigned to this user.
 }
 
 model Article {
@@ -51,4 +53,33 @@ model Comment {
 model Tag {
   tagName String    @id
   article Article[] /// List of articles that have this tag.
+}
+
+model Requirement {
+  id              String              @id @default(uuid()) /// Unique identifier for the requirement.
+  title           String              @unique /// Title of the requirement.
+  slug            String              @unique /// Slug is an uri safe string derived from the title.
+  description     String /// Description of the requirement.
+  priority        String              @default("MEDIUM") /// Priority level of the requirement (LOW, MEDIUM, HIGH, CRITICAL).
+  status          String              @default("TODO") /// Current status of the requirement (TODO, IN_PROGRESS, COMPLETED).
+  dueDate         DateTime? /// Due date for the requirement.
+  creator         User                @relation("RequirementCreator", fields: [creatorUsername], references: [username], onDelete: Cascade) /// User that created this requirement.
+  creatorUsername String /// Username of the creator of this requirement.
+  assignee        User?               @relation("RequirementAssignee", fields: [assigneeUsername], references: [username], onDelete: SetNull) /// User assigned to this requirement.
+  assigneeUsername String? /// Username of the assignee of this requirement.
+  versions        RequirementVersion[] @relation("RequirementVersions") /// List of versions of this requirement.
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @default(now())
+}
+
+model RequirementVersion {
+  id             Int         @id @default(autoincrement())
+  versionNumber  Int /// Version number of the requirement content.
+  description    String /// Description of the requirement at this version.
+  priority       String /// Priority level at this version (LOW, MEDIUM, HIGH, CRITICAL).
+  status         String /// Status at this version (TODO, IN_PROGRESS, COMPLETED).
+  dueDate        DateTime? /// Due date at this version.
+  requirement    Requirement @relation("RequirementVersions", fields: [requirementId], references: [id], onDelete: Cascade) /// Requirement that this version belongs to.
+  requirementId  String /// ID of the requirement this version belongs to.
+  createdAt      DateTime    @default(now())
 }
