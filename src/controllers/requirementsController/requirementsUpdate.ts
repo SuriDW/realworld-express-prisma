@@ -85,7 +85,7 @@ export default async function requirementsUpdate(
       data: updateData,
       include: {
         creator: { include: { followedBy: true } },
-        assignee: true,
+        assignee: { include: { followedBy: true } },
       },
     });
 

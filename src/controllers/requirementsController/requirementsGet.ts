@@ -26,7 +26,7 @@ export default async function requirementsGet(
       where: { id },
       include: {
         creator: { include: { followedBy: true } },
-        assignee: true,
+        assignee: { include: { followedBy: true } },
       },
     });
 
