@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import profileViewer from "./profileViewer";
+import { UserWithFollow } from "../utils/types/userTypes";
 
 type Requirement = {
   id: string;
@@ -12,8 +13,6 @@ type Requirement = {
   createdAt: Date;
   updatedAt: Date;
 };
-
-type UserWithFollow = User & { followedBy: User[] };
 
 type FullRequirement = Requirement & {
   creator: UserWithFollow;

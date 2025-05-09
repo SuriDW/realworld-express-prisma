@@ -1,6 +1,5 @@
 import { User } from "@prisma/client";
-
-type UserWithFollow = User & { followedBy: User[] };
+import { UserWithFollow } from "../utils/types/userTypes";
 
 export default function profileViewer(
   user: UserWithFollow,
