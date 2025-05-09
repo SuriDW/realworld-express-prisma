@@ -20,7 +20,7 @@ export default async function requirementCreatePrisma(
     },
     include: {
       creator: { include: { followedBy: true } },
-      assignee: true,
+      assignee: { include: { followedBy: true } },
     },
   });
   return requirement;
