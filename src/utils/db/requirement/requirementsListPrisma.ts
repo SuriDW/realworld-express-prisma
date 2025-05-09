@@ -33,7 +33,7 @@ export default async function requirementsListPrisma({
     where,
     include: {
       creator: { include: { followedBy: true } },
-      assignee: true,
+      assignee: { include: { followedBy: true } },
     },
     orderBy: { createdAt: "desc" },
     skip: offset,
