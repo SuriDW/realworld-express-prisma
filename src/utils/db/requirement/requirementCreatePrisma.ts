@@ -1,4 +1,3 @@
-import { Requirement } from "@prisma/client";
 import prisma from "../prisma";
 
 interface RequiredFields {

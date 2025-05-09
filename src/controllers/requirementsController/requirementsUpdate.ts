@@ -67,7 +67,13 @@ export default async function requirementsUpdate(
       }
     }
 
-    const updateData: any = {};
+    const updateData: {
+      title?: string;
+      description?: string;
+      content?: string;
+      status?: string;
+      assigneeUsername?: string | null;
+    } = {};
     if (title !== undefined) updateData.title = title;
     if (description !== undefined) updateData.description = description;
     if (content !== undefined) updateData.content = content;
