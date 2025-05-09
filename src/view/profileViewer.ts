@@ -4,7 +4,7 @@ type UserWithFollow = User & { followedBy: User[] };
 
 export default function profileViewer(
   user: UserWithFollow,
-  currentUser?: User
+  currentUser?: User | null
 ) {
   const follows = currentUser
     ? Boolean(

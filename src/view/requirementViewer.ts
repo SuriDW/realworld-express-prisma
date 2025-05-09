@@ -22,7 +22,7 @@ type FullRequirement = Requirement & {
 
 export default function requirementViewer(
   requirement: FullRequirement,
-  currentUser?: User
+  currentUser?: User | null
 ) {
   const creatorView = profileViewer(requirement.creator, currentUser);
   const assigneeView = requirement.assignee
