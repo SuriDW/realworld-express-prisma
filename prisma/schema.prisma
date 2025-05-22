@@ -6,21 +6,24 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL") /// Format in env file: postgresql://USER:PASSWORD@HOST:PORT/DATABASE
+  provider = "sqlite"
+  url      = env("DATABASE_URL") /// Format in env file: file:./dev.db
 }
 
 model User {
-  email      String    @unique /// User email for registering and login use.
-  username   String    @id /// User internal id.
-  password   String /// User password stored in the database.
-  bio        String? /// User biographical information.
-  image      String? /// Link to the user avatar.
-  follows    User[]    @relation("UserFollows") /// List of other users that this one follows.
-  followedBy User[]    @relation("UserFollows") /// List of other users that follows this one.
-  authored   Article[] @relation("Author") /// List of articles this user has written.
-  favorites  Article[] @relation("Favorites") /// List of articles this user has favorited.
-  comment    Comment[] @relation("Author") /// List of comments this user has written.
+  email                String        @unique /// User email for registering and login use.
+  username             String        @id /// User internal id.
+  password             String /// User password stored in the database.
+  bio                  String? /// User biographical information.
+  image                String? /// Link to the user avatar.
+  follows              User[]        @relation("UserFollows") /// List of other users that this one follows.
+  followedBy           User[]        @relation("UserFollows") /// List of other users that follows this one.
+  authored             Article[]     @relation("Author") /// List of articles this user has written.
+  favorites            Article[]     @relation("Favorites") /// List of articles this user has favorited.
+  comment              Comment[]     @relation("Author") /// List of comments this user has written.
+  authoredRequirements Requirement[] @relation("RequirementAuthor") /// List of requirements this user has created.
+  favoriteRequirements Requirement[] @relation("RequirementFavorites") /// List of requirements this user has favorited.
+  teams                Team[]        @relation("TeamMembers") /// Teams this user belongs to.
 }
 
 model Article {
@@ -38,17 +41,63 @@ model Article {
 }
 
 model Comment {
-  id             Int      @id @default(autoincrement())
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
-  body           String /// The main content of the comment.
-  author         User     @relation("Author", fields: [authorUsername], references: [username], onDelete: Cascade) /// User that is the author of this comment.
-  authorUsername String /// Username of the author of this comment.
-  Article        Article  @relation("Comments", fields: [articleSlug], references: [slug], onDelete: Cascade) /// Article that this comment belongs to.
-  articleSlug    String /// Article slug that this comment belongs to.
+  id                 Int          @id @default(autoincrement())
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @default(now())
+  body               String /// The main content of the comment.
+  author             User         @relation("Author", fields: [authorUsername], references: [username], onDelete: Cascade) /// User that is the author of this comment.
+  authorUsername     String /// Username of the author of this comment.
+  Article            Article?     @relation("Comments", fields: [articleSlug], references: [slug], onDelete: Cascade) /// Article that this comment belongs to.
+  articleSlug        String? /// Article slug that this comment belongs to.
+  Requirement        Requirement? @relation("RequirementComments", fields: [requirementSlug], references: [slug], onDelete: Cascade) /// Requirement that this comment belongs to.
+  requirementSlug    String? /// Requirement slug that this comment belongs to.
 }
 
 model Tag {
-  tagName String    @id
-  article Article[] /// List of articles that have this tag.
+  tagName     String        @id
+  article     Article[] /// List of articles that have this tag.
+  requirement Requirement[] /// List of requirements that have this tag.
+}
+
+model Requirement {
+  title          String    @unique
+  slug           String    @id /// Slug is an uri safe string derived from the title.
+  description    String /// Brief description of the requirement.
+  body           String /// The detailed content of the requirement.
+  priority       String? /// Priority of the requirement (high, medium, low, etc.).
+  status         String    @default("pending") /// Status of the requirement (pending, in-progress, completed, etc.).
+  deadline       DateTime? /// Deadline for the requirement.
+  tagList        Tag[] /// List of tags associated with this requirement.
+  author         User      @relation("RequirementAuthor", fields: [authorUsername], references: [username], onDelete: Cascade) /// User that created this requirement.
+  authorUsername String /// Username of the creator of this requirement.
+  favoritedBy    User[]    @relation("RequirementFavorites") /// List of users that have favorited this requirement.
+  comments       Comment[] @relation("RequirementComments") /// List of comments on this requirement.
+  project        Project?  @relation("ProjectRequirements", fields: [projectId], references: [id], onDelete: SetNull) /// Project this requirement belongs to.
+  projectId      Int? /// ID of the project this requirement belongs to.
+  team           Team?     @relation("TeamRequirements", fields: [teamId], references: [id], onDelete: SetNull) /// Team responsible for this requirement.
+  teamId         Int? /// ID of the team responsible for this requirement.
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now())
+}
+
+model Project {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  description  String? /// Description of the project.
+  requirements Requirement[] @relation("ProjectRequirements") /// List of requirements for this project.
+  team         Team?         @relation("ProjectTeam", fields: [teamId], references: [id], onDelete: SetNull) /// Team responsible for this project.
+  teamId       Int? /// ID of the team responsible for this project.
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now())
+}
+
+model Team {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  description  String? /// Description of the team.
+  members      User[]        @relation("TeamMembers") /// Members of this team.
+  requirements Requirement[] @relation("TeamRequirements") /// Requirements assigned to this team.
+  projects     Project[]     @relation("ProjectTeam") /// Projects assigned to this team.
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now())
 }

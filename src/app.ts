@@ -3,6 +3,9 @@ import usersRouter from "./routes/api/users";
 import userRouter from "./routes/api/user";
 import profilesRouter from "./routes/api/profiles";
 import articlesRouter from "./routes/api/articles";
+import requirementsRouter from "./routes/api/requirements";
+import projectsRouter from "./routes/api/projects";
+import teamsRouter from "./routes/api/teams";
 import tagsRouter from "./routes/api/tags";
 import generalErrorHandler from "./middleware/errorHandling/generalErrorHandler";
 import {
@@ -22,6 +25,12 @@ app.use("/api/user", userRouter);
 app.use("/api/profiles", profilesRouter);
 
 app.use("/api/articles", articlesRouter);
+
+app.use("/api/requirements", requirementsRouter);
+
+app.use("/api/projects", projectsRouter);
+
+app.use("/api/teams", teamsRouter);
 
 app.use("/api/tags", tagsRouter);
 
